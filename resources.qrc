@@ -1,0 +1,15 @@
+<RCC>
+    <qresource prefix="/">
+        <file>img/freemp.png</file>
+        <file>img/btn_shuffle_off.png</file>
+        <file>img/btn_previous.png</file>
+        <file>img/btn_next.png</file>
+        <file>img/btn_repeat_off.png</file>
+        <file>img/btn_play.png</file>
+        <file>img/btn_pause.png</file>
+        <file>img/btn_repeat_one.png</file>
+        <file>img/btn_repeat_all.png</file>
+        <file>img/btn_repeat_all_highlighted.png</file>
+        <file>img/btn_shuffle_highlighted.png</file>
+    </qresource>
+</RCC>
