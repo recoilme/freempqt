@@ -20,7 +20,9 @@ MainWindow::MainWindow(QWidget *parent) :
     position = 0;
     ui->listView->setEditTriggers(0);
     ui->listView->setAttribute(Qt::WA_MacShowFocusRect, false);
-
+    ui->listView->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui->listView,SIGNAL(customContextMenuRequested(const QPoint &)),
+            SLOT(showContextMenuForWidget(const QPoint &)));
 
     ui->horizontalSlider->setMaximum(0);
 
@@ -32,12 +34,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->closeButton->setVisible(false);
     setAcceptDrops(true);
 
-    QDir dir =QDir::home();
-    scanner = new Scanner(dir,this);
-    connect(scanner,SIGNAL(fileAdded(QString)),this,SLOT(onFileAdded(QString)));
-    //if (tracklist.size()==0) {
-        scanner->start();
-    //}
+    scanner = NULL;
 
     audio = new AudioThread(this);
     connect(audio, SIGNAL(startOfPlayback(double )), this, SLOT(onStartOfPlayback(double)));
@@ -45,23 +42,23 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(audio, SIGNAL(pauseOfPlayback()), this, SLOT(onPauseOfPlayback()));
     connect(audio, SIGNAL(curPos(double , double )), this, SLOT(onCurPos(double, double)));
 }
+void MainWindow::showContextMenuForWidget(const QPoint &pos)
+{
+    QAction *clear = new QAction(tr("Clear"), this);
+    connect(clear, SIGNAL(triggered()), this, SLOT(onClearList()));
+    QAction *scan = new QAction(tr("Scan"), this);
+    connect(scan, SIGNAL(triggered()), this, SLOT(onFindMusic()));
+    QMenu contextMenu(tr("Context menu"), this);
+    contextMenu.addAction(clear);
+    contextMenu.addAction(scan);
+    contextMenu.exec(ui->listView->mapToGlobal(pos));
+}
 
 void MainWindow::dropEvent(QDropEvent *ev)
 {
    QList<QUrl> urls = ev->mimeData()->urls();
-   if (scanner!=NULL && scanner->isRunning()) {
-       scanner->stopped = true;
-       if(!scanner->wait(2000)) {
-           scanner->terminate();
-           scanner->wait(); //Note: We have to wait again here!
-       }
-       scanner->deleteLater();
-   }
+   stopScanner();
 
-   tracklist.clear();
-   trackModel->deleteAllTracks();
-   audio->stop();
-   //trackModel->removeRows(0,trackModel->)
    foreach(QUrl url, urls)
    {
        qDebug()<<"path:"<< url.path();
@@ -82,6 +79,34 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *ev)
     ev->accept();
 }
 
+void MainWindow::onClearList() {
+    stopScanner();
+    tracklist.clear();
+    trackModel->deleteAllTracks();
+    audio->stop();
+    ui->horizontalSlider->setMaximum(0);
+}
+
+void MainWindow::stopScanner() {
+    if (scanner!=NULL && scanner->isRunning()) {
+        scanner->stopped = true;
+        if(!scanner->wait(2000)) {
+            scanner->terminate();
+            scanner->wait(); //Note: We have to wait again here!
+        }
+        scanner->deleteLater();
+        scanner = NULL;
+    }
+}
+
+void MainWindow::onFindMusic() {
+    stopScanner();
+    QDir dir =QDir::home();
+    scanner = new Scanner(dir,this);
+    connect(scanner,SIGNAL(fileAdded(QString)),this,SLOT(onFileAdded(QString)));
+    scanner->start();
+}
+
 void MainWindow::addItem(QString s) {
     QFileInfo fi(s);
     Track *track = new Track;
@@ -96,17 +121,16 @@ void MainWindow::addItem(QString s) {
 MainWindow::~MainWindow()
 {
     delete ui;
-    scanner->stop();
+    stopScanner();
     audio->stop();
-    delete scanner;
     delete audio;
 }
 
 void MainWindow::on_closeButton_clicked()
 {
-    audio->stop();
     MainWindow::close();
 }
+
 void MainWindow::onStartOfPlayback(double total) {
     ui->horizontalSlider->setMaximum(total);
     ui->pushButton_play->setIcon(QIcon(":/img/btn_pause.png"));
@@ -115,6 +139,7 @@ void MainWindow::onStartOfPlayback(double total) {
     if ( index.isValid() ) {
         ui->listView->selectionModel()->clear();
         ui->listView->selectionModel()->select( index, QItemSelectionModel::Select );
+        ui->listView->scrollTo(index);
         ui->label_artist->setText(tracklist.at(position)->artist);
         ui->label_title->setText(tracklist.at(position)->title);
     }

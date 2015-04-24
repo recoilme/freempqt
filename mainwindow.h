@@ -39,6 +39,8 @@ public slots:
     void onPauseOfPlayback();
     void onCurPos(double position, double total);
     void onFileAdded(QString file);
+    void onClearList();
+    void onFindMusic();
 private slots:
     void on_closeButton_clicked();
     void on_horizontalSlider_sliderPressed();
@@ -50,6 +52,8 @@ private slots:
     void on_pushButton_next_clicked();
 
     void on_listView_clicked(const QModelIndex &index);
+    void showContextMenuForWidget(const QPoint &pos);
+    void stopScanner();
 
 private:
     Ui::MainWindow *ui;
