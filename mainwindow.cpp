@@ -49,11 +49,31 @@ MainWindow::MainWindow(QWidget *parent) :
 void MainWindow::dropEvent(QDropEvent *ev)
 {
    QList<QUrl> urls = ev->mimeData()->urls();
+   if (scanner!=NULL && scanner->isRunning()) {
+       scanner->stopped = true;
+       if(!scanner->wait(2000)) {
+           scanner->terminate();
+           scanner->wait(); //Note: We have to wait again here!
+       }
+       scanner->deleteLater();
+   }
+
+   tracklist.clear();
+   trackModel->deleteAllTracks();
+   audio->stop();
+   //trackModel->removeRows(0,trackModel->)
    foreach(QUrl url, urls)
    {
-       qDebug()<<url.toString();
-       addItem(url.toString());
-       audio->play(url.path());
+       qDebug()<<"path:"<< url.path();
+       QFileInfo fi(url.path());
+       if (fi.isDir()) {
+           scanner = new Scanner(fi.dir(),this);
+           connect(scanner,SIGNAL(fileAdded(QString)),this,SLOT(onFileAdded(QString)));
+           scanner->start();
+       }
+       if (fi.isFile()) {
+           addItem(url.path());
+       }
    }
 }
 

@@ -21,7 +21,7 @@ public:
     while(!stopped && iterator.hasNext()) {
       QString entry(iterator.next());
       if(iterator.fileInfo().suffix().toLower() == "mp3") {
-          qDebug() << iterator.fileInfo().absoluteFilePath();
+          qDebug() << "scanner" << iterator.fileInfo().absoluteFilePath();
           fileList << entry;
           emit fileCountChanged(fileList.count());
           emit fileAdded(iterator.fileInfo().absoluteFilePath());
@@ -31,6 +31,7 @@ public:
       }
     }
   }
+  bool stopped;
 
   QStringList files() const
   {
@@ -42,6 +43,10 @@ public slots:
   {
     stopped = true;
   }
+  bool isScannerRunning()
+  {
+      return stopped;
+  }
 
 signals:
   void fileCountChanged(int);
@@ -50,7 +55,6 @@ signals:
 private:
   QDirIterator iterator;
   QStringList fileList;
-  bool stopped;
 };
 #endif // SCANNER
 

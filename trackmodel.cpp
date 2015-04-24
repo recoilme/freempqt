@@ -16,6 +16,12 @@ int TrackModel::rowCount(const QModelIndex &parent) const
     return list.size();
 }
 
+void TrackModel::deleteAllTracks() {
+    beginResetModel();
+    list.clear();
+    endResetModel();
+}
+
 void TrackModel::appendTrack(Track * const &track)
 {
     //if(std::find(mydata.begin(),mydata.end(),person)!=mydata.end())
@@ -24,6 +30,7 @@ void TrackModel::appendTrack(Track * const &track)
     list.insert(list.size(),track);//.size();
     endInsertRows();
 }
+
 QVariant TrackModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())

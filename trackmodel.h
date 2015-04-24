@@ -15,6 +15,7 @@ public:
     QVariant data(const QModelIndex &index, int role) const;
     Qt::ItemFlags flags(const QModelIndex &index) const;
     void appendTrack(Track * const &track);
+    void deleteAllTracks();
 signals:
 
 public slots:
