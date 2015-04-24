@@ -66,6 +66,7 @@ private:
     bool moving,shuffle;
     short repeatMode;
     long position;
+    QAction *clearAction,*scanAction;
 
 };
 

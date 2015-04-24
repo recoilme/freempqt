@@ -407,6 +407,9 @@ QScrollBar::handle {
    <zorder>listView</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>0</x>
@@ -414,6 +417,9 @@ QScrollBar::handle {
      <width>400</width>
      <height>22</height>
     </rect>
+   </property>
+   <property name="defaultUp">
+    <bool>false</bool>
    </property>
   </widget>
  </widget>

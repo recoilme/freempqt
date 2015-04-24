@@ -44,7 +44,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     clearAction = new QAction(tr("Clear"), this);
     connect(clearAction, SIGNAL(triggered()), this, SLOT(onClearList()));
-    scanAction = new QAction(tr("Scan home dir"+(QDir::home()).absolutePath().toUtf8()), this);
+    scanAction = new QAction(tr("Scan home dir: "+(QDir::home()).absolutePath().toUtf8()), this);
     connect(scanAction, SIGNAL(triggered()), this, SLOT(onFindMusic()));
 
     QMenuBar *m_menuBar = new QMenuBar(this);
