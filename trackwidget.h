@@ -11,7 +11,9 @@ class TrackWidget : public QWidget
 public:
     QLabel *title;
     QLabel *description;
+    QLabel *duration;
     QVBoxLayout *layout;
+    QHBoxLayout *hlayout;
     explicit TrackWidget(QWidget *parent = 0);
     ~TrackWidget();
 signals:

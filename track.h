@@ -9,6 +9,7 @@ public:
     QString artist;
     QString title;
     QString path;
+    QString durationStr;
     ~Track();
 };
 Q_DECLARE_METATYPE(Track *)

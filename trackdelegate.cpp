@@ -21,6 +21,7 @@ void TrackDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
     wdg->title->setText(QString::number(index.row()+1)+". "+ track->artist);
 
     wdg->description->setText(track->title);
+    wdg->duration->setText(track->durationStr);
     QPalette slaveRowPaletteActive;
     slaveRowPaletteActive.setColor(QPalette::WindowText, QColor(255,195,50));
     QPalette slaveRowPalette;
@@ -60,7 +61,7 @@ void TrackDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
 QSize TrackDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     /*указываем любой нужный для нас размер*/
-    int width = 360;
+    int width = 400;
     int height = 60;
     return QSize(width, height);
 }

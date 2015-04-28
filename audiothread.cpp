@@ -100,6 +100,21 @@ void AudioThread::changePosition(int position)
     BASS_ChannelSetPosition(chan, BASS_ChannelSeconds2Bytes(chan, position), BASS_POS_BYTE);
 }
 
+QString AudioThread::getDuration(QString path) {
+    BASS_StreamFree(chan);
+    chan = BASS_StreamCreateFile(false,path.toLocal8Bit(), 0, 0, 0);
+    return formattedTime(BASS_ChannelBytes2Seconds(chan, BASS_ChannelGetLength(chan, BASS_POS_BYTE)));
+}
+
+QString AudioThread::formattedTime(double t) {
+    int position = (int) (0.5+t);
+    int min = (int) position / 60 % 60;
+    int sec = (int) position % 60;
+    QString s;
+    s.sprintf("%02d:%02d",min,sec);
+    return s;
+}
+
 void AudioThread::run()
 {
     while (1);

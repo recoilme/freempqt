@@ -30,6 +30,8 @@ public slots:
     void stop();
     void signalUpdate();
     void changePosition(int position);
+    QString getDuration(QString path);
+    QString formattedTime(double t);
 };
 #endif // AUDIOTHREAD
 

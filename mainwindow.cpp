@@ -31,7 +31,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->listView->setModel(trackModel);
     ui->listView->setItemDelegate(new TrackDelegate);
-    ui->closeButton->setVisible(false);
     setAcceptDrops(true);
 
     scanner = NULL;
@@ -116,12 +115,14 @@ void MainWindow::onFindMusic() {
 }
 
 void MainWindow::addItem(QString s) {
+
     QFileInfo fi(s);
     Track *track = new Track;
     track->path = s;
     QString dirPath = fi.absoluteDir().absolutePath();
     track->artist = dirPath.split("/").last();
     track->title = fi.completeBaseName();
+    track->durationStr = audio->getDuration(s);
     tracklist.append(track);
     trackModel->appendTrack(track);
 }
@@ -195,6 +196,7 @@ void MainWindow::onCurPos(double position, double total) {
     //qDebug() << "Position" << position << "Total" << total;
     if (!moving) {
         ui->horizontalSlider->setValue(position);
+        ui->label_duration->setText(audio->formattedTime(position));
     }
 }
 
